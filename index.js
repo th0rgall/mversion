@@ -110,6 +110,7 @@ exports.update = function(options, callback) {
       updated = null,
       hasSet = false;
 
+    var dirname = "";
     var stored = fileStream
       .pipe(
         through.obj(function(file, e, next) {
@@ -158,7 +159,7 @@ exports.update = function(options, callback) {
       .on('error', function(err) {
         callback(err);
       })
-      .pipe(fs.dest('./'));
+      .pipe(fs.dest(function(file) { return path.dirname(file.path) }));
 
     stored.on('data', function(file) {
       files.push(file.path);
