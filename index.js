@@ -4,7 +4,7 @@ var semver = require('semver'),
   fs = require('vinyl-fs'),
   fUtil = require('./lib/files'),
   git = require('./lib/git'),
-  json = require('comment-json');
+  cjson = require('comment-json');
 
 exports.get = function(callback) {
   var result = fUtil.loadFiles();
@@ -14,7 +14,7 @@ exports.get = function(callback) {
   return result
     .on('data', function(file) {
       try {
-        var contents = json.parse(file.contents.toString());
+        var contents = cjson.parse(file.contents.toString());
         ret[path.basename(file.path)] = contents.version;
       } catch (e) {
         errors.push(file.relative + ': ' + e.message);
@@ -122,7 +122,7 @@ exports.update = function(options, callback) {
             contents = null;
 
           try {
-            contents = json.parse(json);
+            contents = cjson.parse(json);
           } catch (e) {
             errors.push(new Error(file.relative + ': ' + e.message));
             next();
@@ -146,7 +146,7 @@ exports.update = function(options, callback) {
 
           contents.version = updated.version;
           file.contents = Buffer.from(
-            json.stringify(contents, null, fUtil.space(json)) +
+            cjson.stringify(contents, null, fUtil.space(json)) +
               fUtil.getLastChar(json)
           );
           versionList[path.basename(file.path)] = updated.version;
